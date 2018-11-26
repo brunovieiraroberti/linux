@@ -1,0 +1,813 @@
+http://www.pearsonitcertification.com/
+
+
+manage environment variables
+- set
+- env
+
+Top
+z
+h
+c
+r
+k
+
+
+Smbclient -L hostname
+
+export make de variable avaiable for all child process
+
+/etc/profile - for all shell and is executed just one time
+
+/etc/bashrc - executed all shell, don't use as possible
+
+ctrl + i -> auto complete command
+
+pinfo -m -k password -> search in manuals
+
+fc 1 -> to edit the history
+
+heredoc - ultility to create config files from script
+
+copy -a -> maintaim all file or dir properties
+
+chsh user -> change user config
+chage -l lori
+groupmems -g finance -l 
+
+stat /etc/hosts -> to get permissions config
+
+confidence relationship between servers: create the local private (id_rsa) and public key and then copy the local public key (id_rsa.pub) on remote server
+
+DEC - descritionary access control
+
+
+
+access vm
+welk0mITG!
+
+--Generate ssh key pair
+ssh-keygen
+ssh-copy-id 192.168.42.1
+
+
+
+linux kernel documentation
+netlink
+net
+
+/etc/sysconfig/network-scripts/ -> connection config
+nmcli device -> get network info device
+
+Load avarege
+- uptime
+- lscpu
+- top
+
+
+read carrefully 336 page
+
+chvt 1 -> command to change terminal
+
+/sys/class/net -> network devices
+
+In TOP command
+VIRT - max of virtual memory
+
+use screen instead of nohup
+
+for exam - read man of cat
+
+
+findmnt -> command to see disk space avaiable
+
+
+--Cron
+less /etc/crontab → to see how cron works
+at 20:00 and write the script and crtl+d
+
+
+FS file system
+cat /proc/partitions
+
+lsof fileName -> discover open files
+
+
+
+--procedure to extend swap memory
+fdisk /dev/sdb
+mkswap /dev/sdb3
+swapon /dev/sdb3
+
+
+-- Procedure to create file server
+Mkdir <folder>
+fdisk /dev/sda
+	N
+	P
+	Enter
+	Enter
+	+<size>
+w
+mkfs.xfs /dev/sda2
+mount <device> <folder>
+  
+
+
+
+1) create a fisical disk
+2) than create a logical partition or LVM
+3) create a maunt the partition
+-------------------------------------------
+[root@localhost ~]# findmnt -D
+SOURCE                	FSTYPE  	SIZE   USED  AVAIL USE% TARGET
+devtmpfs              	devtmpfs  485.6M  	0 485.6M   0% /dev
+tmpfs                 	tmpfs 	496.2M  	0 496.2M   0% /dev/shm
+tmpfs                 	tmpfs 	496.2M   516K 495.7M   0% /run
+tmpfs                 	tmpfs 	496.2M  	0 496.2M   0% /sys/fs/cgroup
+/dev/mapper/centos-root   xfs       	9G   1.3G   7.7G  14% /
+selinuxfs             	selinuxfs  	0  	0  	0	- /sys/fs/selinux
+/dev/vda5             	xfs    	96.7M   5.2M  91.5M   5% /mounts/data
+/dev/vda1             	xfs    	1014M 154.8M 859.3M  15% /boot
+/dev/mapper/vgdata-lvdata ext4   	65.7M   1.3M  59.9M   2% /files
+tmpfs                 	tmpfs  	99.2M  	0  99.2M   0% /run/user/0
+--------------------------------------------------
+see that SOURCE is the logical volume mapped, TARGET is the fs mounted over LVM
+-------------------------------------------------------------------------------
+[root@localhost ~]# fdisk -l
+Disk /dev/vdb: 6442 MB, 6442450944 bytes, 12582912 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0xa736619c
+   Device Boot  	Start     	End  	Blocks   Id  System
+/dev/vdb1        	2048  	206847  	102400   8e  Linux LVM
+-------------------------------------------------------------------------------
+[root@localhost ~]# lsblk
+NAME          	MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+vdb           	252:16   0	6G  0 disk
+└─vdb1        	252:17   0  100M  0 part
+  └─vgdata-lvdata 253:2	0   72M  0 lvm  /files
+-------------------------------------------------------------------------------
+see that vdb is really the hard disk
+
+Commands used for logical volume
+  562  fdisk /dev/sdc
+  563  partprobe /dev/sdc
+
+  565  pvcreate /dev/sdc1
+  570  vgcreate vgdata /dev/sdc1
+  574  lvcreate -r -n lvdata -L 400M vgdata
+
+  581  mkfs.xfs /dev/vgdata/lvdata
+  583  mount /dev/vgdata/lvdata /warehouse/
+
+  575  vgs
+  576  pvs
+  577  lvs
+  578  pvdisplay
+  580  lvdisplay | more
+mount | grep deviceName
+
+
+
+
+showmount -e 192.168.56.101
+
+Mount via samba
+mount -o username=sambauser //192.168.56.101/data /samba/
+
+
+Mount NFS
+mount 192.168.56.101:/data /mnt
+
+To reduce logical volume
+lvreduce -L -<size>M /dev/device_name<volumeGroup_logicalVolume> 
+
+
+
+CHP 6:
+/etc/default/useradd	
+/etc/login.defs  → user configs
+/etc/sudoers
+
+CHP 7:
+Man her
+Man 7 glob
+Man 7 regex
+cut -d : -f 1,2 /etc/passwd | sort
+tail -f /var/log/messages -> important log file
+cat textfile.txt | tr [a-z] [A-Z] → transform to uppercase
+grep -v -e '^$' -e '^#' /etc/sysconfig/sshd -A 5
+ awk -F : '/root/ {print $1 $6}' textfile.txt
+sed -i s/user/bruno/g textfile.txt
+
+visudo → command to change /etc/sudoers and became root 
+
+
+process like this [kworker/0:0] started by linux
+pstrace
+strace -> track signal in kernel
+kill -l
+man 7 signal
+pkill
+pgrep
+tmux or screen
+
+ldd -> find out libraries that an program need
+rpm -qa -> show installed programs
+rpm -qc software -> see configurations
+rpm -qd software -> see documentation
+rpm -Va -> see config differente than instalation
+rpm -qa | grep chrony
+
+
+yum repolist
+yum install httpd
+yum history
+yum info package
+yum search [package name]
+
+
+systemd -> first process after kernel
+- everything is child process of systemd
+- event based system
+- to access server in troubleshoot mode user the parameter systemd.unit=rescue.target
+/usr/lib/systemd/system    ls to list targets
+Systemctl get-default
+Systemctl set-default multi-user.target
+Systemctl start multi-user.target
+Systemctl isolate rescue.target 
+Systemctl daemon-reload
+
+study systemd unit types
+--service is a deamon or script
+--socket
+--slice -> performance application
+--scope
+
+cpu/memory/netwok/disk/IO
+
+man 7 systemd.time
+
+logging
+less /etc/systemd/journald.conf
+journalctl -f
+journalctl -b
+journalctl --since 05:00 --until 16:00 --identifier sshd
+--Make it persistent
+Mkdir /var/log/journal
+
+systemctl status vsftpd
+timedatectl status sshd
+timedatectl
+timedatectl set-timezone Europe/Amsterdam
+systemctl start vsftpd
+systemctl --type=service
+Systemctl -t help → to see units
+Systemctl list-dependecncies
+Systemctl --failed
+
+
+
+Network
+hostname
+ping
+traceroute
+dig
+netstat/ss
+nmap
+Ip
+
+
+
+man bootparam
+
+Change root password
+rd.break
+Mount -o remount,rw /sysroot
+Chroot /sysroot
+Passwd
+Touch /.autorelabel
+Chcon -t shadow_t /etc/shadow
+reboot
+
+
+https://onedrive.live.com/?authkey=%21AO6IJmphh81QujE&id=35B6F827F12AA9F2%21579&cid=35B6F827F12AA9F2
+
+modules
+lspci
+233  lsmod
+cat /proc/module
+
+
+
+manage environment variables
+- set
+- env
+
+export make de variable abaiable for all child process
+
+/etc/profile - for all shell and is executed just one time
+
+/etc/bashrc - executed all shell, don't use as possible
+
+ctrl + i -> auto complete command
+
+pinfo -m -k password -> search in manuals
+
+fc 1 -> to edit the history
+
+heredoc - ultility to create config files from script
+
+copy -a -> maintaim all file or dir properties
+
+chsh user -> change user config
+chage -l lori
+groupmems -g finance -l
+
+stat /etc/hosts -> to get permissions config
+
+confidence relationship between servers: create the local private (id_rsa) and public key and then copy the local public key (id_rsa.pub) on remote server
+
+DEC - descritionary access control
+
+
+access vm
+welk0mITG!
+
+
+linux kernel documentation
+netlink
+net
+
+/etc/sysconfig/network-scripts/ -> connection config
+nmcli device -> get network info device
+
+
+read carrefully 336 page
+
+chvt 1 -> command to change terminal
+
+/sys/class/net -> network devices
+
+In TOP command
+VIRT - max of virtual memory
+
+
+
+for em - read man of cat
+
+
+findmnt -> command to see disk space avaiable
+
+
+CHP users:
+/etc/default/useradd
+/etc/login.defs
+/etc/sudoers
+
+
+SELinux -> security linux
+never disable or run on permision mode
+Getenforce -> to check the status
+Status are: permissive/enforce/disable
+semanage boolean -l
+
+ps -efZ
+lsof -i :80 -Z
+
+hostnamectl set-hostname name.sufix
+
+export LANG=en_US.utf-8
+source command read the file on kernel
+
+g
+all about LDAP
+authconfig-tui --enablemkhomedir --enablesssd
+
+
+NTP
+Chrony -> time manager
+
+
+sudo firewall-cmd --add-service=samba
+sudo firewall-cmd --add-service=samba --permanent
+sudo firewall-cmd --list-all
+
+
+sudo mkdir -m 2770 /home/finance
+sudo chown -R . finance/home/finance
+ls -dal /home/finance
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   27  ps aux | less
+   31  grep '^#' /etc/sysconfig/sshd
+   32  grep -v '^#' /etc/sysconfig/sshd
+   33  grep -v '^#' /etc/sysconfig/sshd -B 5
+   35  awk -F : '{print $4}' /etc/passwd
+   36  awk -F : '/user/ {print $4}' /etc/passwd
+   37  awk -F : '/user/ {print $}' /etc/passwd
+   38  awk -F : '/user/ {print $0}' /etc/passwd
+   39  awk -F : '/user/ {print $1}' /etc/passwd
+   40  awk -F : '/user/ {print $1 $2}' /etc/
+   43  sed -n 5p /etc/passwd
+   10  gzip etc.tar
+   12  tar xvf etc.tar.gz etc/hosts
+   15  ls -R
+   16  gunzip etc.tar.gz
+   17  ll
+   18  tar xvf etc.tar -C /tmp/ etc/passwd
+   20  rm -f *gz *tar
+   24  ls --color=auto
+   26  less /etc/passwd
+   27  ps aux | less
+   28  top | less
+   29  top aux | less
+   30  ps aux
+   31  grep '^#' /etc/sysconfig/sshd
+   32  grep -v '^#' /etc/sysconfig/sshd
+   33  grep -v '^#' /etc/sysconfig/sshd -B 5
+   34  grep -v -e '^#' -e '^$' /etc/sysconfig/sshd
+   35  awk -F : '{print $4}' /etc/passwd
+   36  awk -F : '/user/ {print $4}' /etc/passwd
+   37  awk -F : '/user/ {print $}' /etc/passwd
+   38  awk -F : '/user/ {print $0}' /etc/passwd
+   39  awk -F : '/user/ {print $1}' /etc/passwd
+   40  awk -F : '/user/ {print $1 $2}' /etc/passwd
+   41  mani awk
+   42  man awk
+   43  sed -n 5p /etc/passwd
+   44  history
+   45  chvt 2
+   46  yum install screen
+   47  screen
+   48  chvt 2
+   49  exit
+   50  w
+   51  exit
+   52  ip a
+   53  ip a | grep link
+   54  ip a | grep inet
+   92  grep authorized_keys
+   93  cat authorized_keys
+   94  tail -f /var/log/secure
+   95  w
+   96  ls
+   97  cd /root/.ssh/
+  100  less authorized_keys
+  103  ssh-keygen
+  105  ssh-copy-id 192.168.42.1
+  106  systemctl poweroff
+  107  w
+  108  who
+  109  chvt 1
+  112  whomi
+  113  whoami
+  114  chvt 1
+  115  screen -r
+  116  chvt 1
+  117  cd /root/
+  123  ssh-copy-id 192.168.48.71
+  124  ssh-copy-id -f 192.168.48.71
+  125  ssh-copy-id -f 192.168.42.71
+   43  sed -n 5p /etc/passwd
+   44  history
+   45  chvt 2
+   46  yum install screen
+   47  screen
+   48  chvt 2
+   49  exit
+   50  w
+   51  exit
+   52  ip a
+   53  ip a | grep link
+   54  ip a | grep inet
+   55  ls
+   56  pwd
+   57  cd etc
+   58  ls
+   59  cd hosts
+   60  ls
+   61  cat hosts
+   88  cd ~
+   89  ls -a
+   90  cd .ssh
+   91  ls
+   92  grep authorized_keys
+   93  cat authorized_keys
+   94  tail -f /var/log/secure
+   95  w
+   96  ls
+   97  cd /root/.ssh/
+   98  ls
+   99  ll
+  100  less authorized_keys
+  101  ls
+  102  ls -la
+  103  ssh-keygen
+  104  ls -la
+  105  ssh-copy-id 192.168.42.1
+  106  systemctl poweroff
+  107  w
+  108  who
+  109  chvt 1
+  110  whhhomy
+  111  whhhomi
+  112  whomi
+  113  whoami
+  114  chvt 1
+  115  screen -r
+  116  chvt 1
+  117  ping 192.168.42.71
+  118  ssh 192.168.42.71
+  119  exit
+  120  id
+  121  visudo
+  122  useradd -G wheel laura
+  123  id laura
+  124  passwd laura
+  125  exit
+  126  cd /root/
+  127  ll
+  128  ls -la
+  129  cd .ssh/
+  130  ll
+  131  ls -la
+  132  ssh-copy-id 192.168.48.71
+  133  ssh-copy-id -f 192.168.48.71
+  134  ssh-copy-id -f 192.168.42.71
+  138  less id_rsa.pub
+  139  less id_rsa
+  140  less authorized_keys
+  141  history
+  142  less /etc/default/useradd
+  143  less /etc/login.defs
+  144  less /etc/sudoers.d/
+  145  less /etc/sudoers
+  146  tail -n /etc/shadow
+  147  tail -n10 /etc/shadow
+  148  tail -f10 /etc/shadow
+  149  tail -f 10 /etc/shadow
+  150  yum install zsh
+  151  chage -l lori
+  152  vim /etc/login.defs
+  
+  Everything inside this dir will be copied to all home users
+  153  cd /etc/skel/
+  154  mkdir pictures
+  155  mkdir documents
+  156  ls -la
+  157  vim .bashrc
+  158  useradd linda
+  159  id linda
+  160  cd /home/linda/
+  161  ls -la
+  162  passwd linda
+  163  passwd -n 30 -w 3 -x 90 linda
+  164  for i in lucy,lori,bob; do useradd $i; done
+  165  for i in lucy, lori, bob; do useradd $i; done
+  166  id lucy
+  167  id bob
+  168  id lori
+  169  id lucy
+  170  for i in lucy, lori, bob; do useradd $i; done
+  171  grep lori /etc/passwd /etc/shadow /etc/group
+  172  groupadd finance
+  173  groupmems -g finance 0l
+  174  groupmems -g finance -l
+  175  groupmems -g finance -a lori
+  176  groupmems -g finance -l
+  177  exit
+  178  cd /sys/class/block/
+  179  ls -lrt
+  180  lsblk
+  181  lsscsi
+  182  ssh 10.0.0.10
+  183  ssh 192.168.122.68
+  184  cd /home/user/
+  194  qemu-img resize centos7-rhx.qcow2 +5G
+  195  ssh 192.168.122.68
+   35  ls -la
+   36  setfacl-m d:g:account:r,g:sales:rwx /data/sales
+   37  setfacl -m d:g:account:r,g:sales:rwx /data/sales
+   38  setfacl -m d:g:sales:r,g:account:rwx /data/account
+   39  getfacl sales
+   40  useradd linda
+   41  passwd linda
+   42  usermod -aG sales linda
+   43  usermod -aG account linda
+   44  su - linda
+   45  ls -la
+   46  ip a
+   47  nmcli con show
+   48  ip a
+   49  nmcli con show
+   50  nmcli con mod
+   51  ip -a
+   52  ip a
+   53  nmcli con add con-name "dhcp" type ethernet ifname eth0
+   54  nmcli con add con-name "static" ifname eth0 autoconnect no type ethernet ip4 10.0.0.10/24 gw4 10.0.0.1
+   55  nmcli con show
+   56  nmcli con up "static"
+   57  df -h
+   58  systemctl poweroff
+   59  hostname
+   60  dd if=/dev/vda of=/root/diskfile bs=1M count=1
+   61  df -h
+   62  cp /etc/fstab /root/fstab
+   63  fdisk
+   64  fdisk /dev/vda
+   65  fdisk -l /dev/vda
+   66  fdisk
+   67  fdisk -b
+   68  fdisk -l /dev/vda
+   69  cat /proc/partitions
+   70  partprobe /de/vda
+   71  partprobe /dev/vda
+   72  cat /proc/partitions
+   74  fdisk
+   75  fdisk e
+   76  fdisk /dev/vda
+   77  partprobe /dev/vda
+   78  df -h
+   79  fdisk -l show
+   80  fdisk -l /dev/vda
+   81  df -h
+   82  df
+   83  df -h
+   84  du -h
+   85  df -h
+   86  lsblk
+   87  findmnt -D /
+   88  lsblk
+   89  findmnt -D /vda1
+   90  findmnt -D /dev/vda1
+   91  vmstat
+   92  free -m
+   93  top
+   94  fdisk /dev/vda
+   95  mkswap /dev/vda6
+   96  free -g
+   97  mkswap /dev/vda6
+   98  fdisk /dev/vda
+   99  fdisk -l /dev/vda
+  100  fdisk /dev/vda
+  101  blkid
+  102  mkswap /dev/vda6
+  103  fdisk /dev/vda
+  104  fdisk -l /dev/vda
+  105  mkswap /dev/vda6
+  106  swapon /dev/vda6
+  107  fdisk -l /dev/vda
+  108  mkswap /dev/vda6
+  109  fdisk /dev/sda
+  110  fdisk /dev/vda
+  111  partprobe
+  112  mkswap /dev/vda6
+  113  free -g
+  114  vmstat
+  115  swapon /dev/vda6
+  116  vmstat
+  117  free -g
+  118  lsblk
+  119  blkid
+  120  fdisk -l /dev/vda
+  121  lsblk
+  122  blkid
+  123  fdisk /dev/vda
+  124  partprobe
+  125  blkid
+  126  lsblk
+  127  findmnt
+  128  man findmnt
+  129  mani -k findmnt
+  130  pinfo -m -k findmnt
+  131  man findmnt
+  132  history > /tmp/hst.txt
+  133  less /tmp/hst.txt
+  134  lsblk
+  135  blkid
+  136  mkfs.xfs /dev/vda5
+  137  lsblk
+  138  blkid
+  139  df -h
+  140  mkdir -p /mounts/data
+  141  vi /etc/fstab
+  142  maunt -a
+  143  mount -a
+  144  vi /etc/fstab
+  145  ls /mounts/data
+  146  ls /mounts/
+  147  cat /etc/fstab
+  148  blkid
+  149  vi /etc/fstab
+  150  mount -a
+  151  df -h
+  152  findmnt
+  153  findmnt -D /dev/vda5
+  154  findmnt -D tmpfs
+  155  findmnt -D /
+  156  systemctl poweroff
+  157  fdisk /dev/vdb
+  158  lsblk
+  159  fdisk -l
+  160  fdisk /dev/vda
+  161  fdisk /dev/vdb
+  162  pvs
+  163  systemctl restart
+  164  lsblk
+  165  pvcreate /dev/vdb1
+  166  pvs
+  167  pvdisplay
+  168  lsblk
+  169  vgdisplay
+  170  ls -l /dev/vgdata/lvdata
+  171  pvs
+  172  vgcreate vgdata /dev/vdb1
+  173  pvs
+  174  vgdisplay
+  175  vgs
+  176  lvcreate -n lvdata -l 50%FREE vgdata
+  177  df -h
+  178  findmnt -D /dev/vdb1
+  179  findmnt -D /dev/vdb
+  180  findmnt /dev/vdb
+  181  findmnt /dev/vdb1
+  182  lvs
+  183  mkfs.ext4 /dev/vgdata/lvdata
+  184  lvs
+  185  findmnt /dev/vdb1
+  186  findmnt /dev/vdb
+  187  df -h
+  188  mkdir /files
+  189  vi /etc/fstab
+  190  mount -a
+  191  df -h
+  192  findmnt -D /dev/mapper/vgdata-lvdata
+  193  findmnt -D /files
+  194  lsblk
+  195  pvs
+  196  findmnt -D /files
+  197  vgs
+  198  fdisk /dev/sdb
+  199  fdisk /dev/vdb
+  200  fdisk /dev/sdb
+
+ip addr
+ip route show 
+ip route add default via ipaddress
+ip route del default via ipaddress
+
+  202  fdisk /dev/sdb
+  203  fdisk -l
+  204  lsblk
+  205  man lsblk
+  206  pinfo -m -k blk
+  207  man lsblk
+  208  lsblk
+  209  fdisk /dev/vdd
+  210  lsblk
+  211  vgextend vgdata /dev/vdd1
+  212  pvs
+  213  vgs
+  214  findmnt -D /files
+  215  lvs
+  216  vgs
+  217  df -h
+  218  lvextend -r -l +50%FREE /dev/vgdata/lvdata
+  219  df -h
+  220  findmnt -D /files
+  221  lvreduce -r -L -50M /dev/vgdata/lvdata
+  222  findmnt -D /files
+  223  lsblk
+  224  findmnt
+  225  fdisk
+  226  fdisk -l
+  227  man findmnt
+  228  findmnt -D
+  229  df -h
+  230  lsblk
+  231  man lsblk
+  232  lsblk -f
+  233  history
+
+
